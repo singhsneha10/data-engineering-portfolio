@@ -1,8 +1,8 @@
-# 🏗️ Job Scraper Pipeline
+# 🕷️ Automated Job Scraper Pipeline
 
 An automated **data engineering pipeline** that fetches live job listings from the Himalayas Jobs API, stores them in a **PostgreSQL** database, and runs on a fully automated **daily schedule** using APScheduler.
 
-Built as a production-style project to demonstrate real-world data engineering skills.
+Built as a production-style project to demonstrate real-world data engineering skills — clean module separation, scheduled automation, and idempotent data loading.
 
 ---
 
@@ -10,11 +10,11 @@ Built as a production-style project to demonstrate real-world data engineering s
 
 Most job scraper projects just print data to the terminal. This pipeline goes further:
 
-- Fetches **live job data** from a real API
-- **Stores it persistently** in a relational database
-- **Deduplicates** entries automatically — no dirty data
+- Fetches **live job data** from a real public API
+- **Stores it persistently** in a PostgreSQL relational database
+- **Deduplicates** entries automatically — no dirty data on repeat runs
 - **Runs on a schedule** without any manual intervention
-- Built with **production-style code structure** — config, database, scraper, and scheduler are all separated cleanly
+- Built with **production-style code structure** — config, database, scraper, and scheduler are cleanly separated into individual modules
 
 ---
 
@@ -34,15 +34,15 @@ Most job scraper projects just print data to the terminal. This pipeline goes fu
 ## 📁 Project Structure
 
 ```
-job_scraper_pipeline/
-├── .env               # Database credentials (never committed to Git)
-├── .gitignore         # Ignores .env, venv, pycache
+webscraping/
 ├── config.py          # Loads DB config from .env
 ├── database.py        # DB connection, table creation, insert logic
 ├── scraper.py         # Fetches jobs from API and saves to DB
 ├── scheduler.py       # Runs scraper automatically every day at 8 AM
 ├── requirements.txt   # All dependencies
-└── venv/              # Virtual environment (not committed)
+├── .env               # Database credentials (never committed to Git)
+├── .gitignore         # Excludes .env, venv, __pycache__
+└── README.md
 ```
 
 ---
@@ -51,8 +51,8 @@ job_scraper_pipeline/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/job-scraper-pipeline.git
-cd job-scraper-pipeline
+git clone https://github.com/singhsneha10/data-engineering-portfolio.git
+cd data-engineering-portfolio/webscraping
 ```
 
 ### 2. Create and Activate Virtual Environment
@@ -71,9 +71,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Dependencies include: `psycopg2-binary`, `APScheduler`, `requests`, `python-dotenv`
+
 ### 4. Configure Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the project root:
 ```
 DB_HOST=localhost
 DB_PORT=5432
@@ -81,6 +83,8 @@ DB_NAME=job_listings
 DB_USER=postgres
 DB_PASSWORD=your_password_here
 ```
+
+> ⚠️ Never commit your `.env` file — it is excluded via `.gitignore`
 
 ### 5. Initialize the Database
 ```bash
@@ -153,13 +157,13 @@ Himalayas Jobs API
 ## 🧠 Key Engineering Decisions
 
 **Why Himalayas API instead of HTML scraping?**
-Other job boards (RemoteOK, Jobicy) returned 403 errors and blocked scrapers. Himalayas provides a clean, reliable public API — a more realistic data engineering approach.
+Other job boards (RemoteOK, Jobicy) returned 403 errors and blocked scrapers. Himalayas provides a clean, reliable public API — a more realistic and stable data engineering approach.
 
 **Why `ON CONFLICT (job_url) DO NOTHING`?**
-Running the pipeline daily means the same jobs will appear in the API repeatedly. This constraint ensures we never insert duplicates, keeping the data clean without any extra code.
+Running the pipeline daily means the same jobs will appear in the API repeatedly. This constraint ensures duplicates are never inserted, keeping the data clean without any extra application-level logic.
 
 **Why separate files instead of one script?**
-Separating config, database logic, scraper logic, and scheduler logic mirrors how real data pipelines are structured in professional environments. Each module has a single responsibility and can be tested independently.
+Separating config, database logic, scraper logic, and scheduler logic mirrors how real data pipelines are structured professionally. Each module has a single responsibility and can be tested or replaced independently.
 
 ---
 
@@ -171,6 +175,7 @@ Separating config, database logic, scraper logic, and scheduler logic mirrors ho
 ✅ Inserted: Python Developer at Acme Corp
 ✅ Inserted: Backend Engineer at StartupXYZ
 ✅ Inserted: Data Engineer at Remote Co
+⚠️  Skipped duplicate: Data Analyst at TechCorp
 ...
 ```
 
@@ -179,14 +184,15 @@ Separating config, database logic, scraper logic, and scheduler logic mirrors ho
 ## 🔮 Potential Future Improvements
 
 - [ ] Add `logging` module to replace `print()` statements
-- [ ] Export data to `.csv` for analysis
-- [ ] Scrape multiple job categories (python, SQL, data engineer)
-- [ ] Add a simple dashboard to visualize job trends
-- [ ] Deploy on a cloud VM so it runs 24/7 without keeping laptop open
+- [ ] Export data to `.csv` for downstream analysis
+- [ ] Scrape multiple job categories (Python, SQL, data engineering)
+- [ ] Add a simple dashboard to visualize job trends over time
+- [ ] Deploy on a cloud VM so the pipeline runs 24/7 without keeping laptop open
+- [ ] Orchestrate with Apache Airflow for better monitoring and retry logic
 
 ---
 
 ## 👤 Author
 
-**Your Name**
+**Sneha Singh**
 [LinkedIn](https://www.linkedin.com/in/sneha-singh-04a1a6254/) • [GitHub](https://github.com/singhsneha10)
