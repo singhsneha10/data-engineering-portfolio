@@ -1,0 +1,24 @@
+# Environment variables — never commit credentials
+.env
+
+# Python virtual environment
+venv/
+env/
+.venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
